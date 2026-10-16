@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.env
+server/data/
+server/data-test/
+server/data_backup/
+data-test/
+*.log
+.DS_Store
+*firebase*.json
+*serviceAccount*.json

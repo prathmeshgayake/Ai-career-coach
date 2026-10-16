@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ai-career-coach-backend
+    env: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: node dist/src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: POLL_INTERVAL_MINUTES
+        value: 5
+      - key: ALLOWED_ORIGINS
+        value: "*"
