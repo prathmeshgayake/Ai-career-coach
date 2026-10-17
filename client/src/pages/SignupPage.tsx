@@ -138,7 +138,7 @@ export const SignupPage: React.FC = () => {
                 id="name"
                 type="text"
                 required
-                placeholder="Aarav Sharma"
+                placeholder="Your Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="form-input"
@@ -166,7 +166,7 @@ export const SignupPage: React.FC = () => {
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="aarav@university.edu"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-input"
