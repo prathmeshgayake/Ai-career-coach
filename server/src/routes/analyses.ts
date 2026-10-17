@@ -50,10 +50,19 @@ router.post(
  */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const analyses = await analysisStore.getAllAnalyses(req.userId);
+    const rawAnalyses = await analysisStore.getAllAnalyses(req.userId);
+    const populated = await Promise.all(
+      rawAnalyses.map(async (a) => {
+        const latestAssessment = await analysisStore.getLatestAssessmentVersion(a.id);
+        return {
+          ...a,
+          latestAssessment,
+        };
+      })
+    );
     res.status(200).json({
       status: 'success',
-      data: analyses,
+      data: populated,
     });
   } catch (err) {
     next(err);

@@ -138,7 +138,7 @@ export const AnalysisDetailPage: React.FC = () => {
     setIsDeleting(true);
     try {
       await deleteAnalysis(id);
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       setIsDeleting(false);
       setShowDeleteModal(false);
@@ -190,7 +190,7 @@ export const AnalysisDetailPage: React.FC = () => {
           message={analysisError}
           onRetry={loadData}
         />
-        <Link to="/" className="btn btn-secondary">
+        <Link to="/dashboard" className="btn btn-secondary">
           <ArrowLeft size={16} /> Back to Dashboard
         </Link>
       </div>
@@ -201,7 +201,7 @@ export const AnalysisDetailPage: React.FC = () => {
     return (
       <div style={{ textAlign: 'center', padding: '64px 20px' }}>
         <h2>Analysis not found</h2>
-        <Link to="/" className="btn btn-primary" style={{ marginTop: '16px' }}>
+        <Link to="/dashboard" className="btn btn-primary" style={{ marginTop: '16px' }}>
           Back to Dashboard
         </Link>
       </div>
@@ -231,8 +231,8 @@ export const AnalysisDetailPage: React.FC = () => {
           gap: '12px',
         }}
       >
-        <Link to="/" className="btn btn-ghost btn-sm">
-          <ArrowLeft size={16} /> Dashboard
+        <Link to="/dashboard" className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <ArrowLeft size={16} /> Back to Dashboard
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

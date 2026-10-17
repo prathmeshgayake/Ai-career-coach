@@ -42,6 +42,7 @@ export const DashboardPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTrackingList, setActiveTrackingList] = useState<TrackedRepository[]>([]);
   const [isLoadingTracking, setIsLoadingTracking] = useState(false);
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<string>('');
 
   // Fetch current authenticated student profile
   useEffect(() => {
@@ -121,10 +122,10 @@ export const DashboardPage: React.FC = () => {
     };
   }, [analyses]);
 
-  // Aggregate or pick latest assessments for the visual charts
-  const latestAnalysis = analyses[0];
-  const latestAssessments = latestAnalysis?.latestAssessment?.assessments || [];
-  const latestRecommendations = latestAnalysis?.latestAssessment?.recommendations || [];
+  // Active analysis for the visual analytics section
+  const selectedAnalysis = analyses.find((a) => a.id === selectedAnalysisId) || analyses[0];
+  const activeAssessments = selectedAnalysis?.latestAssessment?.assessments || [];
+  const activeRecommendations = selectedAnalysis?.latestAssessment?.recommendations || [];
 
   // Filter analyses
   const safeAnalyses = Array.isArray(analyses) ? analyses : [];
@@ -283,46 +284,70 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {/* Visual Analytics Section (When assessments exist) */}
-      {analyses.length > 0 && latestAssessments.length > 0 && (
+      {analyses.length > 0 && activeAssessments.length > 0 && selectedAnalysis && (
         <section style={{ marginBottom: '36px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#0f172a' }}>
                 Visual Analytics & Recommendations
               </h2>
               <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>
-                Interactive visual breakdown of your latest assessment: {latestAnalysis.repositoryOwner}/{latestAnalysis.repositoryName}
+                Showing assessment breakdown for: <strong style={{ color: '#0f172a' }}>{selectedAnalysis.repositoryOwner}/{selectedAnalysis.repositoryName}</strong>
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => navigate(`/analysis/${latestAnalysis.id}`)}
-              className="btn btn-secondary btn-sm"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-            >
-              <span>Full Assessment View</span>
-              <ArrowRight size={14} />
-            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              {analyses.length > 1 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label htmlFor="repoSelect" style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>
+                    Viewing:
+                  </label>
+                  <select
+                    id="repoSelect"
+                    value={selectedAnalysis.id}
+                    onChange={(e) => setSelectedAnalysisId(e.target.value)}
+                    className="form-select"
+                    style={{ fontSize: '0.85rem', padding: '6px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', fontWeight: 600 }}
+                  >
+                    {analyses.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.repositoryOwner}/{a.repositoryName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => navigate(`/analysis/${selectedAnalysis.id}`)}
+                className="btn btn-secondary btn-sm"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              >
+                <span>Full Assessment View</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
           </div>
 
           <div className="grid-2" style={{ gap: '20px', marginBottom: '20px' }}>
             {/* Donut Chart */}
             <SkillMatchChart
-              assessments={latestAssessments}
-              title={`Skill Match: ${latestAnalysis.repositoryName}`}
+              assessments={activeAssessments}
+              title={`Skill Match: ${selectedAnalysis.repositoryName}`}
             />
 
             {/* Prioritized Recommendations */}
             <RecommendationsPanel
-              recommendations={latestRecommendations}
+              recommendations={activeRecommendations}
               title="Prioritized Next Steps"
             />
           </div>
 
           {/* Full Width Skill Coverage & Gap Chart */}
           <CoverageGapChart
-            assessments={latestAssessments}
-            title={`Evidence Breakdown: ${latestAnalysis.repositoryOwner}/${latestAnalysis.repositoryName}`}
+            assessments={activeAssessments}
+            title={`Evidence Breakdown: ${selectedAnalysis.repositoryOwner}/${selectedAnalysis.repositoryName}`}
           />
         </section>
       )}
@@ -424,10 +449,10 @@ export const DashboardPage: React.FC = () => {
         >
           <div>
             <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#0f172a' }}>
-              Your Saved Analyses
+              Your Saved Analyses ({analyses.length} {analyses.length === 1 ? 'Repository' : 'Repositories'})
             </h2>
             <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '2px' }}>
-              All evaluations saved for this student account
+              All evaluations saved for this student account — click any card to view detailed evidence
             </p>
           </div>
 
