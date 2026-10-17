@@ -61,13 +61,34 @@ export class FirestoreStore implements DataStore {
   }
 
   async getUserByEmail(email: string): Promise<UserRecord | null> {
+    const cleanEmail = email.toLowerCase().trim();
     const snapshot = await this.db
       .collection('users')
-      .where('email', '==', email.toLowerCase().trim())
+      .where('email', '==', cleanEmail)
       .limit(1)
       .get();
-    if (snapshot.empty) return null;
-    return snapshot.docs[0].data() as UserRecord;
+    if (!snapshot.empty) {
+      return snapshot.docs[0].data() as UserRecord;
+    }
+
+    // Fallback: check if dots were stripped or added (e.g. Gmail addresses)
+    const usernamePart = cleanEmail.split('@')[0];
+    const domainPart = cleanEmail.split('@')[1];
+    const usernameNoDots = usernamePart.replace(/\./g, '');
+
+    const allUsers = await this.getAllUsers();
+    const found = allUsers.find((u) => {
+      const uEmail = (u.email || '').toLowerCase().trim();
+      if (uEmail === cleanEmail) return true;
+      const uUser = uEmail.split('@')[0];
+      const uDomain = uEmail.split('@')[1];
+      if (uDomain === domainPart && uUser.replace(/\./g, '') === usernameNoDots) {
+        return true;
+      }
+      return false;
+    });
+
+    return found || null;
   }
 
   async getAllUsers(): Promise<UserRecord[]> {

@@ -130,9 +130,20 @@ export class JsonFileStore implements DataStore {
   async getUserByEmail(email: string): Promise<UserRecord | null> {
     await this.ensureInitialized();
     const cleanEmail = email.toLowerCase().trim();
-    const user = Object.values(this.memoryCache.users).find(
-      (u) => u.email.toLowerCase().trim() === cleanEmail
-    );
+    const usernamePart = cleanEmail.split('@')[0];
+    const domainPart = cleanEmail.split('@')[1];
+    const usernameNoDots = usernamePart.replace(/\./g, '');
+
+    const user = Object.values(this.memoryCache.users).find((u) => {
+      const uEmail = (u.email || '').toLowerCase().trim();
+      if (uEmail === cleanEmail) return true;
+      const uUser = uEmail.split('@')[0];
+      const uDomain = uEmail.split('@')[1];
+      if (uDomain === domainPart && uUser.replace(/\./g, '') === usernameNoDots) {
+        return true;
+      }
+      return false;
+    });
     return user || null;
   }
 

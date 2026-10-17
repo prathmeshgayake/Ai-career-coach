@@ -19,7 +19,7 @@ router.post(
   '/signup',
   [
     body('name').trim().notEmpty().withMessage('Full name is required'),
-    body('email').isEmail().normalizeEmail().withMessage('A valid email address is required'),
+    body('email').trim().isEmail().withMessage('A valid email address is required'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
     body('targetRole').optional().trim(),
     body('githubUsername').optional().trim(),
@@ -103,7 +103,7 @@ router.post(
 router.post(
   '/login',
   [
-    body('email').isEmail().normalizeEmail().withMessage('A valid email address is required'),
+    body('email').trim().isEmail().withMessage('A valid email address is required'),
     body('password').notEmpty().withMessage('Password is required'),
   ],
   async (req: Request, res: Response) => {
@@ -125,7 +125,7 @@ router.post(
       if (!user) {
         res.status(401).json({
           status: 'error',
-          message: 'Invalid email or password',
+          message: 'No account found with this email. Please check your email or sign up first.',
         });
         return;
       }
@@ -135,7 +135,7 @@ router.post(
       if (!isMatch) {
         res.status(401).json({
           status: 'error',
-          message: 'Invalid email or password',
+          message: 'Incorrect password. Please verify and try again.',
         });
         return;
       }
