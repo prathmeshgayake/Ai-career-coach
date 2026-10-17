@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, GitBranch, RefreshCw, ShieldCheck, Code2, ArrowRight } from 'lucide-react';
 import { apiClient } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
 export const LandingPage: React.FC = () => {
+  const { user, isAuthenticated } = useAuth();
   const [systemOnline, setSystemOnline] = useState<null | boolean>(null);
   const [monitoringActive, setMonitoringActive] = useState(false);
 
@@ -91,24 +93,66 @@ export const LandingPage: React.FC = () => {
             improves when you push new commits.
           </p>
 
-          <Link
-            to="/new"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '14px 32px',
-              background: '#1d4ed8',
-              color: '#ffffff',
-              borderRadius: '8px',
-              fontWeight: 700,
-              fontSize: '1rem',
-              textDecoration: 'none',
-              transition: 'background 0.15s',
-            }}
-          >
-            Analyze a Job <ArrowRight size={18} />
-          </Link>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            {isAuthenticated && user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '14px 32px',
+                    background: '#4f46e5',
+                    color: '#ffffff',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Go to Your Dashboard <ArrowRight size={18} />
+                </Link>
+                <Link
+                  to="/new"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '14px 28px',
+                    background: '#f1f5f9',
+                    color: '#334155',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                    textDecoration: 'none',
+                    border: '1px solid #cbd5e1',
+                  }}
+                >
+                  Analyze New Repository
+                </Link>
+              </>
+            ) : (
+              <Link
+                to="/new"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '14px 32px',
+                  background: '#1d4ed8',
+                  color: '#ffffff',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  fontSize: '1rem',
+                  textDecoration: 'none',
+                  transition: 'background 0.15s',
+                }}
+              >
+                Analyze a Job <ArrowRight size={18} />
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* How it works */}

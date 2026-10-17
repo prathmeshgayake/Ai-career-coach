@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, Mail, Lock, User, Briefcase, Github, ArrowRight, AlertCircle } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Briefcase, Github, ArrowRight, AlertCircle, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { user, signup } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -14,6 +14,13 @@ export const SignupPage: React.FC = () => {
   const [githubUsername, setGithubUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // If already authenticated, redirect straight to dashboard
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,20 +109,32 @@ export const SignupPage: React.FC = () => {
         {errorMessage && (
           <div
             style={{
-              padding: '12px 14px',
+              padding: '14px',
               backgroundColor: '#fee2e2',
               border: '1px solid #fecaca',
               borderRadius: '8px',
               color: '#b91c1c',
               fontSize: '0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
               marginBottom: '20px',
             }}
           >
-            <AlertCircle size={16} style={{ flexShrink: 0 }} />
-            <span>{errorMessage}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              <span>{errorMessage}</span>
+            </div>
+            {errorMessage.toLowerCase().includes('already exists') && (
+              <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #fca5a5' }}>
+                <button
+                  type="button"
+                  onClick={() => navigate('/login', { state: { email } })}
+                  className="btn btn-secondary btn-sm"
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.85rem' }}
+                >
+                  <LogIn size={15} />
+                  <span>Log in with {email} instead</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 
