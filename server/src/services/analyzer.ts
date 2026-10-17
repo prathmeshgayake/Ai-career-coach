@@ -63,7 +63,7 @@ export class AnalyzerService {
     // 3. Initialize Analysis record
     const analysis: Analysis = {
       id: analysisId,
-      userId: input.userId || 'student-aarav',
+      userId: input.userId || '',
       jobSource,
       repositoryUrl: input.repositoryUrl.trim(),
       repositoryOwner: owner,

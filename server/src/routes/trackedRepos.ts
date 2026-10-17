@@ -67,7 +67,7 @@ router.post(
       const now = new Date().toISOString();
       const newTracking: TrackedRepository = {
         id: generateId(),
-        userId: req.userId || analysis.userId || 'student-aarav',
+        userId: req.userId || analysis.userId || '',
         analysisId,
         repositoryUrl: analysis.repositoryUrl,
         owner: analysis.repositoryOwner,

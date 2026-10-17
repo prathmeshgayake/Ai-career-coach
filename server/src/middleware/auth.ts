@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { userStore } from '../db/userStore';
-import { getStudentById } from '../data/students';
 import { PublicUser } from '../models/types';
 
 declare global {
@@ -77,24 +76,10 @@ export async function studentAuthMiddleware(
         next();
         return;
       }
-
-      // Check fallback student profile
-      const fallbackStudent = getStudentById(trimmed);
-      if (fallbackStudent) {
-        req.user = fallbackStudent;
-        req.userId = fallbackStudent.id;
-        next();
-        return;
-      }
     }
 
-    // 4. Default student profile for unauthenticated exploratory calls
-    const defaultStudent = getStudentById('student-aarav');
-    if (defaultStudent) {
-      req.user = defaultStudent;
-      req.userId = defaultStudent.id;
-    }
-
+    // No valid authentication found - proceed without user context
+    // Protected routes will reject via requireAuth middleware
     next();
   } catch (err) {
     next(err);

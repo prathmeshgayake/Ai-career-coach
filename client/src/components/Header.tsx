@@ -3,7 +3,6 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Sparkles, PlusCircle, LayoutDashboard, Compass, Github, LogOut, User, LogIn } from 'lucide-react';
 import { apiClient } from '../api/client';
 import { useAuth } from '../context/AuthContext';
-import StudentSwitcher from './StudentSwitcher';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -93,8 +92,38 @@ export const Header: React.FC = () => {
           {/* Auth Controls */}
           {isAuthenticated && user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {/* Profile & Switcher */}
-              <StudentSwitcher />
+              {/* User Profile Badge */}
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '6px 12px',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: '#eef2ff',
+                    color: '#4f46e5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
+                  {user.name}
+                </span>
+              </div>
 
               {/* Logout Button */}
               <button

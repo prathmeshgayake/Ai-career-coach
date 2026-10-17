@@ -5,7 +5,6 @@ import { body, validationResult } from 'express-validator';
 import { userStore } from '../db/userStore';
 import { generateId } from '../utils/id';
 import { config } from '../config';
-import { PRECONFIGURED_STUDENTS, getStudentById } from '../data/students';
 import { generateActionPlan } from '../services/actionPlan';
 import { analysisStore } from '../db/analysisStore';
 import { UserRecord } from '../models/types';
@@ -235,28 +234,21 @@ router.get('/action-plan', async (req: Request, res: Response) => {
 
 /**
  * GET /api/v1/auth/students
- * Returns all real registered users plus test accounts.
+ * Returns all real registered users.
  */
 router.get('/students', async (_req: Request, res: Response) => {
   try {
     const dbUsers = await userStore.getAllUsers();
     const publicDbUsers = dbUsers.map(u => userStore.toPublicUser(u));
 
-    // Combine with preconfigured test accounts (avoiding duplicate IDs)
-    const existingIds = new Set(publicDbUsers.map(u => u.id));
-    const combined = [
-      ...publicDbUsers,
-      ...PRECONFIGURED_STUDENTS.filter(s => !existingIds.has(s.id)),
-    ];
-
     res.status(200).json({
       status: 'success',
-      data: combined,
+      data: publicDbUsers,
     });
   } catch (err: any) {
     res.status(200).json({
       status: 'success',
-      data: PRECONFIGURED_STUDENTS,
+      data: [],
     });
   }
 });
@@ -290,22 +282,6 @@ router.post('/switch', async (req: Request, res: Response) => {
       status: 'success',
       message: `Switched to ${pub.name}`,
       data: { user: pub, token },
-    });
-    return;
-  }
-
-  // Fallback to preconfigured
-  const student = getStudentById(targetId);
-  if (student) {
-    const token = jwt.sign(
-      { userId: student.id, email: student.email },
-      config.jwtSecret,
-      { expiresIn: '7d' }
-    );
-    res.status(200).json({
-      status: 'success',
-      message: `Switched to ${student.name}`,
-      data: { user: student, token },
     });
     return;
   }

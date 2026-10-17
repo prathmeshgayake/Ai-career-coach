@@ -28,7 +28,7 @@ router.post(
         jobDescription,
         repositoryUrl,
         previewedJobSource: jobPreviewData,
-        userId: req.userId || 'student-aarav',
+        userId: req.userId || '',
       });
 
       res.status(201).json({
