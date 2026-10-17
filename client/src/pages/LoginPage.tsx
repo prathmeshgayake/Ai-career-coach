@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Sparkles, Mail, Lock, ArrowRight, AlertCircle, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Sparkles, Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, switchStudentContext } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,18 +36,7 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickDemo = async (studentId: string) => {
-    setIsLoading(true);
-    setErrorMessage(null);
-    try {
-      await switchStudentContext(studentId);
-      navigate('/dashboard');
-    } catch (err: any) {
-      setErrorMessage('Could not initialize demo profile.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   return (
     <div
@@ -207,53 +196,7 @@ export const LoginPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Instant Demo Sandbox */}
-        <div style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px solid #f1f5f9' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-            <ShieldCheck size={14} color="#64748b" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Recruiter & Quick Demo Access
-            </span>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('student-aarav')}
-              disabled={isLoading}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                borderRadius: '6px',
-                border: '1px solid #e2e8f0',
-                backgroundColor: '#f8fafc',
-                color: '#334155',
-                cursor: 'pointer',
-              }}
-            >
-              Demo as Aarav (Backend)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('student-priya')}
-              disabled={isLoading}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                borderRadius: '6px',
-                border: '1px solid #e2e8f0',
-                backgroundColor: '#f8fafc',
-                color: '#334155',
-                cursor: 'pointer',
-              }}
-            >
-              Demo as Priya (Frontend)
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );
